@@ -8,57 +8,69 @@
 // ======== OBJECTS DEFINITIONS ========
 // Define your objects here
 
-const dog = {
-  species: 'dog',
-  name: 'Globgor',
-  gender: 'male',
-  legs: 4,
-  hands: 0,
-  friends: ['Eclipsa'],
-  saying: 'woof!',
-};
+class Creature {
+  constructor(name, gender = 'unknown') {
+    this.name = name;
+    this.gender = gender;
+    this.friends = [];
+  }
 
-const cat = {
-  species: 'cat',
-  name: 'Eclipsa',
-  gender: 'female',
-  legs: 4,
-  hands: 0,
-  friends: ['Globgor', 'Star'],
-  saying: 'mew-mew-mew-mew',
-};
+  addFriends(...newFriends) {
+    newFriends.forEach(({ name }) => this.friends.push(name));
+    return this.friends;
+  }
+}
 
-const woman = {
-  species: 'homo sapiens',
-  name: 'Star',
-  gender: 'female',
-  legs: 2,
-  hands: 2,
-  friends: ['Eclipsa', 'Marko'],
-  saying: "I'm a magical princess from another dimension!",
-};
+class Dog extends Creature {
+  constructor(name, gender) {
+    super(name, gender);
+    this.species = 'dog';
+    this.legs = 4;
+    this.saying = 'woof!';
+  }
+}
 
-const man = {
-  species: 'homo sapiens',
-  name: 'Marko',
-  gender: 'male',
-  legs: 2,
-  hands: 2,
-  friends: ['Star'],
-  saying: "I'm a misunderstood bad boy!",
-};
+class Cat extends Creature {
+  constructor(name, gender) {
+    super(name, gender);
+    this.species = 'cat';
+    this.legs = 4;
+    this.saying = 'mew-mew-mew-mew';
+  }
+}
 
-const catWoman = {
-  species: 'homo catus',
-  name: 'Amelia',
-  gender: 'female',
-  legs: 2,
-  hands: 2,
-  friends: [],
-  saying: cat.saying,
-};
+class Human extends Creature {
+  constructor(name, gender) {
+    super(name, gender);
+    this.species = 'homo sapiens';
+    this.legs = 2;
+    this.hands = 2;
+  }
+}
 
-const creatures = [dog, cat, woman, man, catWoman];
+class Woman extends Human {
+  constructor(name) {
+    super(name, 'female');
+    this.saying = 'I am a woman.';
+  }
+}
+
+class Man extends Human {
+  constructor(name) {
+    super(name, 'male');
+    this.saying = 'I am a man.';
+  }
+}
+
+const dog = new Dog('Globgor', 'male');
+const cat = new Cat('Eclipsa', 'female');
+const woman = new Woman('Star');
+const man = new Man('Marko');
+man.addFriends(cat, woman);
+woman.addFriends(man, dog);
+dog.addFriends(cat, woman, man);
+
+const creatures = [dog, cat, woman, man];
 
 // ======== OUTPUT ========
 /* Use print(message) for output.
@@ -69,19 +81,17 @@ const creatures = [dog, cat, woman, man, catWoman];
    so code reviewers might focus on a single file that is index.js.
    */
 
-const getTemplate = ({
-  species,
-  name,
-  gender,
-  legs,
-  hands,
-  friends,
-  saying,
-}) => {
-  let template = `species: ${species}; name: ${name}; gender: ${gender}; legs: ${legs}; hands: ${hands}; saying: ${saying}; `;
-  if (friends.length) {
-    template += `friends: ${friends}; `;
+const getTemplate = (creature) => {
+  let template = '';
+  for (let key in creature) {
+    if (key === 'friends' && !creature[key].length) {
+      continue;
+    }
+    if (creature[key]) {
+      template += `${key}: ${creature[key]}; `;
+    }
   }
+
   return template;
 };
 
